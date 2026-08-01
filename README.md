@@ -216,24 +216,23 @@ http://localhost:5173
 
 ---
 
-# Screenshots
+## 📸 Screenshots
 
-## Dashboard
+### Dashboard
 
-_Add dashboard screenshot here._
+![Dashboard](screenshots/dashboard.png)
 
-## PDF Upload
+### PDF Upload
 
-_Add PDF upload screenshot here._
+![PDF Upload](screenshots/pdf-upload.png)
 
-## AI Complaint Analysis
+### AI Complaint Analysis
 
-_Add AI analysis screenshot here._
+![AI Analysis](screenshots/ai-analysis.png)
 
-## Complaint Dashboard
+### Complaint Dashboard
 
-_Add complaint dashboard screenshot here._
-
+![Complaint Dashboard](screenshots/complaint-dashboard.png)
 ---
 
 # Future Enhancements
