@@ -33,10 +33,12 @@ app.add_middleware(
         "http://localhost:5176",
         "http://127.0.0.1:5176",
 
-        # Vercel Deployment
+        # Your Vercel production domain
         "https://ai-customer-complaint-management-sy-tau.vercel.app",
-        "https://ai-customer-complaint-management-system-ilchg8gxb.vercel.app",
     ],
+    # Allow all Vercel preview deployments
+    allow_origin_regex=r"https://.*\.vercel\.app",
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
