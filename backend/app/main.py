@@ -17,26 +17,42 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for React
+# ==========================
+# CORS Configuration
+# ==========================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # Local Development
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:5175",
+        "http://127.0.0.1:5175",
         "http://localhost:5176",
         "http://127.0.0.1:5176",
+
+        # Vercel Deployment
+        "https://ai-customer-complaint-management-sy-tau.vercel.app",
+        "https://ai-customer-complaint-management-system-ilchg8gxb.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# ==========================
 # Register Routers
+# ==========================
 app.include_router(complaint_router)
 app.include_router(ai_router)
 app.include_router(pdf_router)
 app.include_router(dashboard_router)
 
+# ==========================
+# Root Endpoint
+# ==========================
 @app.get("/")
 def root():
     return {
