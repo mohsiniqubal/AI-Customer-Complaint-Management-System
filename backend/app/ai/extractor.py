@@ -20,31 +20,78 @@ def extract_complaint(complaint: str):
 
     content = response.content.strip()
 
-    print("\n===== RAW LLM RESPONSE =====")
+    print("\n========== RAW LLM RESPONSE ==========")
     print(content)
-    print("============================\n")
+    print("======================================\n")
 
     # Remove markdown code fences
-    content = re.sub(r"^```(?:json)?\s*", "", content)
+    content = re.sub(r"^```json\s*", "", content, flags=re.IGNORECASE)
+    content = re.sub(r"^```\s*", "", content)
     content = re.sub(r"\s*```$", "", content)
+
     content = content.strip()
 
-    print("\n===== CLEANED JSON =====")
-    print(content)
-    print("========================\n")
-
     try:
-        return json.loads(content)
+        result = json.loads(content)
 
-    except Exception as e:
-        print("JSON ERROR:", e)
+        print("\n========== PARSED JSON ==========")
+        print(result)
+        print("=================================\n")
+
+        # If document is not a pharma complaint
+        if result.get("valid_complaint") is False:
+            return {
+                "valid_complaint": False,
+                "message": result.get(
+                    "message",
+                    "This document is not a pharmaceutical customer complaint."
+                )
+            }
+
+        # Return extracted information
+        return {
+            "valid_complaint": True,
+            "customer_name": result.get("customer_name", ""),
+            "product_name": result.get("product_name", ""),
+            "batch_number": result.get("batch_number", ""),
+            "complaint_summary": result.get("complaint_summary", ""),
+            "risk_level": result.get("risk_level", ""),
+            "recommendation": result.get("recommendation", ""),
+        }
+
+    except json.JSONDecodeError as e:
+
+        print("\n========== JSON ERROR ==========")
+        print(e)
+        print("RAW CONTENT:")
+        print(content)
+        print("================================\n")
 
         return {
-            "customer_name": "Not Provided",
-            "product_name": "Not Provided",
-            "batch_number": "Not Provided",
-            "complaint_summary": content[:200],
-            "risk_level": "Medium",
-            "recommendation": "Review complaint manually.",
+            "valid_complaint": False,
+            "message": "AI returned invalid JSON.",
+            "customer_name": "",
+            "product_name": "",
+            "batch_number": "",
+            "complaint_summary": "",
+            "risk_level": "",
+            "recommendation": "",
             "raw_response": content,
+        }
+
+    except Exception as e:
+
+        print("\n========== UNKNOWN ERROR ==========")
+        print(e)
+        print("===================================\n")
+
+        return {
+            "valid_complaint": False,
+            "message": str(e),
+            "customer_name": "",
+            "product_name": "",
+            "batch_number": "",
+            "complaint_summary": "",
+            "risk_level": "",
+            "recommendation": "",
         }
