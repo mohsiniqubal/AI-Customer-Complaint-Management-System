@@ -29,12 +29,18 @@ function App() {
   // Manual AI Analysis
   // ===============================
   const analyzeComplaint = async () => {
+
+    if (!complaint.trim()) {
+      alert("Please enter a complaint.");
+      return;
+    }
+
     try {
+
       const res = await api.post("/ai/extract", {
         complaint,
       });
 
-      // Invalid complaint
       if (res.data.valid_complaint === false) {
         alert(res.data.message);
         return;
@@ -50,8 +56,20 @@ function App() {
       });
 
     } catch (e) {
-      console.error(e);
-      alert("AI Analysis Failed");
+
+      console.error("FULL ERROR:", e);
+
+      if (e.response) {
+        console.log("Status:", e.response.status);
+        console.log("Response:", e.response.data);
+
+        alert(JSON.stringify(e.response.data));
+      } else if (e.request) {
+        alert("No response received from backend.");
+      } else {
+        alert(e.message);
+      }
+
     }
   };
 
@@ -72,7 +90,6 @@ function App() {
 
       const res = await api.post("/pdf/upload", fd);
 
-      // Invalid document
       if (res.data.error) {
         alert(res.data.message);
         return;
@@ -99,17 +116,18 @@ function App() {
 
     } catch (e) {
 
-      console.error(e);
+      console.error("UPLOAD ERROR:", e);
 
       if (e.response) {
-        alert(e.response.data.message || "PDF Upload Failed");
+        alert(JSON.stringify(e.response.data));
+      } else if (e.request) {
+        alert("No response received from backend.");
       } else {
-        alert("Server Error");
+        alert(e.message);
       }
 
     }
   };
-
   // ===============================
   // Save Complaint
   // ===============================
@@ -144,9 +162,16 @@ function App() {
 
     } catch (e) {
 
-      console.error(e);
+      console.error("SAVE ERROR:", e);
 
-      alert("Failed to Save Complaint");
+      if (e.response) {
+        alert(JSON.stringify(e.response.data));
+      } else if (e.request) {
+        alert("No response received from backend.");
+      } else {
+        alert(e.message);
+      }
+
     }
   };
 
@@ -163,7 +188,6 @@ function App() {
           borderRadius: 3,
         }}
       >
-
         <Typography
           variant="h4"
           align="center"
@@ -172,10 +196,7 @@ function App() {
           🤖 AI Customer Complaint Management System
         </Typography>
 
-        <Typography
-          variant="h6"
-          sx={{ mt: 2 }}
-        >
+        <Typography variant="h6" sx={{ mt: 2 }}>
           Upload Complaint PDF
         </Typography>
 
@@ -289,6 +310,7 @@ function App() {
             </Button>
           </Grid>
         </Grid>
+
       </Paper>
 
       <Dashboard />
